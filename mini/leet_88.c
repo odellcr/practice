@@ -78,6 +78,7 @@ MunitResult my_test(const MunitParameter params[], void *user_data_or_fixture)
   int *str = (int*) user_data_or_fixture;
 
   merge(t1, 5, 3, t2, 2, 2);
+  printf("here\n");
 
   munit_assert_memory_equal(sizeof(int)*5, t1,t1_d); 
 /*
@@ -94,7 +95,10 @@ MunitResult my_test(const MunitParameter params[], void *user_data_or_fixture)
 
 int main(int argc, char *argv[])
 {
-  return munit_suite_main(&suite, NULL, argc, argv);
+  printf("Hello debug\n");
+  munit_suite_main(&suite, NULL, argc, argv);
+
+  return 1;
 }
 
 

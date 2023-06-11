@@ -1,3 +1,3 @@
 *.out
 *.swp
-munit/
+test_framework/munit/
