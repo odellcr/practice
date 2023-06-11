@@ -1,2 +1,2 @@
 # practice
-practice problems form various sources
+Daily practice uploads.
