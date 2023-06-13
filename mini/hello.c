@@ -1,12 +1,17 @@
 #include <stdio.h>
-#include "munit.h"
 
 int main(int argc, char *argv[])
 {
-    if(argc > 2)
-        munit_assert_int(argv[1][0], ==, argv[2][0]);
+  int i = 0;
+  int arr[10];
 
-    printf("hello, world\n");
+  for(i = 0; i < 10; i ++)
+  {
+	arr[i] = i;
+	printf("i:%d\n",i);
+  }
 
-    return 0;
+  printf("hello, world\n");
+
+  return 0;
 }
