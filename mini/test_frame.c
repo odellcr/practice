@@ -1,20 +1,72 @@
 /*
- * Two arrays nums1 and nums2, sorted ascending. Two integers m and n. Array nums1 has m elements
- * and is m + n size, nums2 has n elements and is n size. Merge nums1 and nums2 into nums1 in ascending order.
+ * Given integer array nums and integer val, remove all occurrences of val in nums in-place. Order can be changed. Return the number of elements in nums which are not equal to val.
  *
- * Don't pass back rather store in nums1 which will be passed by reference. Only first m elements of nums1 are populated. 
+ * Elements in nums which are NOT equal to val is k.
  *
+ * Change nums such that the first k elements of nums contain the elements NOT equal to val.
  *
- * Notes: Special cases, make sure to check for the instances where m or n are zero in which ther is no actual work to do. As well as m or n being.
- * */
+ * return k.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "munit.h"
 
+#define SZ(a) (sizeof(a) / sizeof((a)[0]))
+
 // My function
+int removeElement(int *nums, int numsSize, int val);
+
+int removeElement(int *nums, int numsSize, int val)
+{
+  int i;
+  int j;
+  int count = 0;
+
+  if(numsSize == 0)
+  {
+	return 0;
+  }
+
+  printf("size is: %d\n", numsSize);
+  for(i = 0; i < numsSize; i++)
+  {
+	if(nums[i] == val)
+	{
+	  j = i;
+
+	  while(j != numsSize - 1 && nums[i] == val)
+	  {
+		for(j = i; j < numsSize - 1; j++)
+		{
+		  nums[j] = nums[j + 1];
+		}
+
+		nums[j] = val;
+
+		for(j=i; j < numsSize - 1; j++)
+		{
+		  if(nums[j] != val)
+		  {
+			j = i;
+			break;
+		  }
+		}
+	  }
+	}
+
+	if(nums[i] != val)
+	{
+	  printf("%d\n",nums[i]);
+	  count++;
+	}
+  }
+
+  return count;
+}
 
 // Test functions pre is called before test and post after
-MunitResult test(const MunitParameter params[], void *data);
+MunitResult test_1(const MunitParameter params[], void *data);
+MunitResult test_2(const MunitParameter params[], void *data);
 static void *pre(const MunitParameter params[], void* user_data);
 static void post(void *fixture);
 
@@ -38,11 +90,19 @@ static MunitParameterEnum test_params[] = {
 MunitTest tests[] = {
   { 
 	"/my-test",
-	test,
-	pre,
-	post,
+	test_1,
+	NULL, // pre
+	NULL, // post
 	MUNIT_TEST_OPTION_NONE,
-	test_params
+	NULL
+  },
+  { 
+	"/my-test",
+	test_2,
+	NULL, // pre
+	NULL, // post
+	MUNIT_TEST_OPTION_NONE,
+	NULL
   },
   {NULL,NULL,NULL,NULL,MUNIT_TEST_OPTION_NONE,NULL}
 };
@@ -83,23 +143,74 @@ static void post(void *fixture)
 
 
 // Actual test code, each test should do one thing i.e. one per test case, we just need multiples of these
-MunitResult test(const MunitParameter params[], void *data)
+MunitResult test_2(const MunitParameter params[], void *data)
 {
-  const char *foo;
-  const char *bar;
-  ret_val = MUNIT_ERROR;
-  int t1[5] = {1,2,4,0,0};
-  int t1_d[5] = {1,2,2,3,4};
-  int t2[2] = {2,3};
+  int ret_val = MUNIT_ERROR;
+  int n1[] = {3,2,2,3};
+  int n1_d[] = {2,2,0,0};
+  int n1_k = 2;
+  int val = 3;
+  int k;
 
   int *str = (int*) data;
 
   // Setup anything
-  printf("here\n");
+  printf("T1\n");
 
   // Call function we are testing
+  k = removeElement(n1, SZ(n1), val);
+
+  for(int i = 0; i < k; i++)
+  {
+	printf("n1:%d\n", n1[i]);
+  }
   
+  for(int i = 0; i < n1_k; i++)
+  {
+	printf("n1_d:%d\n", n1_d[i]);
+  }
+
   // Do assert test here
+  munit_assert_memory_equal(sizeof(int) * n1_k, n1, n1_d);
+  munit_assert(n1_k == k);
+
+  // Fill return value with result
+  ret_val = MUNIT_OK;
+
+  return ret_val;
+}
+
+MunitResult test_1(const MunitParameter params[], void *data)
+{
+  int ret_val = MUNIT_ERROR;
+  int n1[] = {0,1,2,2,3,0,4,2};
+  int n1_d[] = {0,1,3,0,4,0,0,0};
+  int n1_k = 5;
+  int val = 2;
+  int k;
+
+  int *str = (int*) data;
+
+  // Setup anything
+  printf("T2\n");
+
+  // Call function we are testing
+  k = removeElement(n1, SZ(n1), val);
+
+  for(int i = 0; i < k; i++)
+  {
+	printf("n1:%d\n", n1[i]);
+  }
+  
+  for(int i = 0; i < n1_k; i++)
+  {
+	printf("n1_d:%d\n", n1_d[i]);
+  }
+
+  // Do assert test here
+  munit_assert_memory_equal(sizeof(int) * n1_k, n1, n1_d);
+  munit_assert(n1_k == k);
+ 
 
   // Fill return value with result
   ret_val = MUNIT_OK;

@@ -1,11 +1,15 @@
 /*
- * Given integer array nums and integer val, remove all occurrences of val in nums in-place. Order can be changed. Return the number of elements in nums which are not equal to val.
  *
- * Elements in nums which are NOT equal to val is k.
+ * Given an int array nums in acending order, remove some duplicates in-place such taht each unique element
+ * appears at most twice. The relative order should be kept the same.
  *
- * Change nums such that the first k elements of nums contain the elements NOT equal to val.
+ * Since it isn't possible to change the arrary length in some languages, you must instead have the result be placed in the first part of the array nums.
  *
- * return k.
+ * If there are k elements after removing the duplicates, then the first k elements of nums should hold the final result. It doesn't matter what is byond the first k elements.
+ *
+ * Do not allocate extra space for another array (fixed space)
+ *
+ *
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,54 +18,67 @@
 #define SZ(a) (sizeof(a) / sizeof((a)[0]))
 
 // My function
-int removeElement(int *nums, int numsSize, int val);
+int removeDuplicates(int *nums, int numsSize);
 
-int removeElement(int *nums, int numsSize, int val)
+int removeDuplicates(int *nums, int numsSize)
 {
-  int i;
-  int j;
-  int count = 0;
+  int i =0;
+  int j= 0;
+  int insert = 0;
+  int valid = 0;
+  int e = 0;
+  int dup = 0;
+  int k =0;
+  int cache = 0;
 
-  if(numsSize == 0)
-  {
+  if(numsSize <= 1) {
+	return numsSize;
+  }
+  if(nums == NULL) {
 	return 0;
   }
 
-  printf("size is: %d\n", numsSize);
-  for(i = 0; i < numsSize; i++)
-  {
-	if(nums[i] == val)
-	{
-	  j = i;
+  e = numsSize - 1;
 
-	  while(j != numsSize - 1 && nums[i] == val)
-	  {
-		for(j = i; j < numsSize - 1; j++)
-		{
-		  nums[j] = nums[j + 1];
-		}
-
-		nums[j] = val;
-
-		for(j=i; j < numsSize - 1; j++)
-		{
-		  if(nums[j] != val)
-		  {
-			j = i;
-			break;
-		  }
-		}
+  cache = nums[0];
+  for(i = 0; i < e; i++) {
+	if(cache == nums[i + 1]) {
+	  if(dup) {
+		nums[i + 1] = -1;
 	  }
+	  dup = 1;
 	}
-
-	if(nums[i] != val)
-	{
-	  printf("%d\n",nums[i]);
-	  count++;
+	else {
+	  cache = nums[i + 1];
+	  dup = 0;
 	}
   }
 
-  return count;
+  e = e + 1;
+  for(i = 0; i < e; i++) {
+	if(nums[i] == -1) {
+	  if(j == 0) {
+		j = i;
+	  }
+	  while(j < e && nums[j] == -1) {
+		j++;
+	  }
+	  if(j < e) {
+		cache = j;
+		nums[i] = nums[j];
+		nums[j] = -1;
+	  }
+	  // j means we have value
+	  // e case we are done
+	}
+
+  }
+
+  k = 0;
+  for(k = 0; k < e && nums[k] != -1; k++);
+
+  return k;
+
 }
 
 // Test functions pre is called before test and post after
@@ -143,12 +160,12 @@ static void post(void *fixture)
 
 
 // Actual test code, each test should do one thing i.e. one per test case, we just need multiples of these
-MunitResult test_2(const MunitParameter params[], void *data)
+MunitResult test_1(const MunitParameter params[], void *data)
 {
   int ret_val = MUNIT_ERROR;
-  int n1[] = {3,2,2,3};
-  int n1_d[] = {2,2,0,0};
-  int n1_k = 2;
+  int n1[] = {0,0,1,1,1,1,2,3,3,};
+  int n1_d[] = {0,0,1,1,2,3,3,-1,-1,-1};
+  int n1_k = 7;
   int val = 3;
   int k;
 
@@ -158,7 +175,7 @@ MunitResult test_2(const MunitParameter params[], void *data)
   printf("T1\n");
 
   // Call function we are testing
-  k = removeElement(n1, SZ(n1), val);
+  k = removeDuplicates(n1, sizeof(n1)/sizeof(n1[0]));
 
   for(int i = 0; i < k; i++)
   {
@@ -180,11 +197,11 @@ MunitResult test_2(const MunitParameter params[], void *data)
   return ret_val;
 }
 
-MunitResult test_1(const MunitParameter params[], void *data)
+MunitResult test_2(const MunitParameter params[], void *data)
 {
   int ret_val = MUNIT_ERROR;
-  int n1[] = {0,1,2,2,3,0,4,2};
-  int n1_d[] = {0,1,3,0,4,0,0,0};
+  int n1[] = {1,1,1,2,2,3};
+  int n1_d[] = {1,1,2,2,3,-1};
   int n1_k = 5;
   int val = 2;
   int k;
@@ -195,7 +212,7 @@ MunitResult test_1(const MunitParameter params[], void *data)
   printf("T2\n");
 
   // Call function we are testing
-  k = removeElement(n1, SZ(n1), val);
+  k = removeDuplicates(n1, sizeof(n1)/sizeof(n1[0]));
 
   for(int i = 0; i < k; i++)
   {
